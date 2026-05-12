@@ -41,6 +41,29 @@ Dual-flow architecture consists of an MLP-based linear stream and a CNN-based no
 <img src="./figures/xpatch.png" alt="" align=center />
 </p>
 
+### xPatchG: Component-aware Inter-variable Dependency Extension
+
+For multivariate time-series forecasting, xPatchG follows the key design of xPatch: seasonal and trend components should not be treated as the same signal. Instead of adding one generic graph after the final forecast, xPatchG injects variable modeling inside the decomposed streams.
+
+The proposed workflow is:
+
+1. Use the same RevIN and exponential decomposition as xPatch.
+2. Send the seasonal component to a patch-level non-linear stream with dynamic variable attention over patch embeddings, which is suitable for local, phase-shifted, high-frequency relationships.
+3. Send the trend component to a linear stream with a stable global channel mixer before the MLP, which is suitable for smooth long-term co-movement among variables.
+4. Fuse the two component forecasts with the original xPatch dual-stream head.
+
+This design keeps xPatch's component separation while allowing each component to use a dependency model that matches its own temporal characteristics.
+
+You can select the new model with `--model xPatchG`. Additional graph hyperparameters are available in `run.py`:
+
+- `--dep_hidden`: hidden size for seasonal variable/node encoders.
+- `--dep_dropout`: dropout in the dependency modules.
+- `--dep_temperature`: softmax temperature for seasonal dependency attention.
+- `--seasonal_dep_alpha`: self-forecast blend ratio in the dynamic seasonal patch dependency.
+- `--trend_dep_alpha`: self-forecast blend ratio in the static trend dependency.
+- `--seasonal_dep_scale` and `--trend_dep_scale`: initial residual scales for component-wise dependency injection.
+
+
 ## Results
 
 ### Long-term Forecasting with Unified Experimental Settings

@@ -21,7 +21,7 @@ parser.add_argument('--is_training', type=int, required=True, default=1, help='s
 parser.add_argument('--train_only', type=bool, required=False, default=False, help='perform training on full input dataset without validation and testing')
 parser.add_argument('--model_id', type=str, required=True, default='test', help='model id')
 parser.add_argument('--model', type=str, required=True, default='xPatch',
-                    help='model name, options: [xPatch]')
+                    help='model name, options: [xPatch, xPatchG]')
 
 # data loader
 parser.add_argument('--data', type=str, required=True, default='ETTh1', help='dataset type')
@@ -64,6 +64,16 @@ parser.add_argument('--loss', type=str, default='mse', help='loss function')
 parser.add_argument('--lradj', type=str, default='type1', help='adjust learning rate')
 parser.add_argument('--use_amp', action='store_true', help='use automatic mixed precision training', default=False)
 parser.add_argument('--revin', type=int, default=1, help='RevIN; True 1 False 0')
+
+# Inter-variable dependency graph (xPatchG)
+parser.add_argument('--dep_hidden', type=int, default=64, help='hidden size of the adaptive channel dependency graph')
+parser.add_argument('--dep_dropout', type=float, default=0.0, help='dropout rate in the adaptive channel dependency graph')
+parser.add_argument('--dep_temperature', type=float, default=1.0, help='softmax temperature for adaptive channel dependency attention')
+parser.add_argument('--dep_alpha', type=float, default=0.8, help='fallback self-forecast blend ratio for component dependency mixers')
+parser.add_argument('--seasonal_dep_alpha', type=float, default=0.7, help='self-forecast blend ratio for dynamic seasonal patch dependency')
+parser.add_argument('--trend_dep_alpha', type=float, default=0.9, help='self-forecast blend ratio for static trend dependency')
+parser.add_argument('--seasonal_dep_scale', type=float, default=0.1, help='initial scale for seasonal dependency residual')
+parser.add_argument('--trend_dep_scale', type=float, default=0.1, help='initial scale for trend dependency residual')
 # parser.add_argument('--warmup_epochs',type=int,default = 0)
 
 # GPU
