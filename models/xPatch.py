@@ -37,7 +37,6 @@ class Model(nn.Module):
         self.use_cce_trend    = True
 
         self.cce_kernel = getattr(configs, "cce_kernel", 3)  # 建议默认3更稳
-        self.cce_alpha  = getattr(configs, "cce_alpha", 1.0)
 
         # 季节分支：不使用 CCE
         self.cce_seasonal = nn.Identity()
@@ -47,7 +46,9 @@ class Model(nn.Module):
             self.cce_trend = CrossCorrelationEmbedding(
                 in_channels=c_in,
                 kernel_size=self.cce_kernel,
-                alpha=self.cce_alpha
+                gate_type=getattr(configs, "cce_gate_type", "channel"),
+                reduction=getattr(configs, "cce_reduction", 4),
+                init_scale=getattr(configs, "cce_init_scale", -5.0)
             )
         else:
             self.cce_trend = nn.Identity()
